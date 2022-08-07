@@ -2,20 +2,29 @@ package com.revature.models;
 
 public class Course {
 	
+	private final int courseId;
 	private final String title;
-	private final int courseNumber;
-	private final Instructor instructor;
-	private final String startDate;
-	private final String endDate;
-	private final Student[] students;
+	private final String description;
+	private final User instructor;
 	
-	public Course(String title, int courseNumber, Instructor instructor, String startDate, String endDate, Student[] students) {
+	public int getCourseId() {
+		return courseId;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public User getInstructor() {
+		return instructor;
+	}
+	
+	public Course(int courseId, String title, String description, User instructor) {
 		super();
+		this.courseId = courseId;
 		this.title = title;
-		this.courseNumber = courseNumber;
+		this.description = description;
 		this.instructor = instructor;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.students = students;		
 	}
 }

@@ -1,14 +1,27 @@
 package com.revature.models;
 
 public class Grade {
-	Student student;
-	Assignment assignment;
-	double score;
+	 
+	private final Assignment assignment;
+	private final double pointsEarned;
+	private final User student;
 	
-	public Grade(Student student, Assignment assignment, double score) {
+	public Assignment getAssignment() {
+		return assignment;
+	}
+	
+	public double getPointsEarned() {
+		return pointsEarned;
+	}
+	
+	public User getStudent() {
+		return student;
+	}
+	
+	public Grade(Assignment assignment, double pointsEarned, User student) {
 		super();
-		this.student = student;
 		this.assignment = assignment;
-		this.score = score;
+		this.pointsEarned = pointsEarned;
+		this.student = student;
 	}
 }

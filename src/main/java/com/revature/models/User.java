@@ -1,19 +1,39 @@
 package com.revature.models;
 
 public class User {
-	private final String userName;
-	private final String password;
+	
+	private final int userId;
 	private final String firstName;
 	private final String lastName;
-	private final int id;
 	private final Role role;
 	
-	public User(String userName, String password, String firstName, String lastName, int id, String role) {
-		this.userName = userName;
-		this.password = password;
+	
+	public int getUserId() {
+		return userId;
+	}
+
+
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+
+
+	public String getLastName() {
+		return lastName;
+	}
+
+
+
+	public Role getRole() {
+		return role;
+	}
+
+	public User(int userId, String firstName, String lastName, String role) {
+		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.id = id;
 		this.role = Role.valueOf(role);
 	}
 }

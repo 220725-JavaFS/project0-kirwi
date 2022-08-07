@@ -1,20 +1,30 @@
 package com.revature.models;
 
 public class Assignment {
-	Course course;
-	private final String title;
-	private final String assignDate;
-	private final String dueDate;
-	private final double pointsPossible;
-	private final AssignmentType assignmentType;
 	
-	public Assignment(Course course, String title, String assignDate, String dueDate, double pointsPossible, String assignmentType) {
+	private final int assignmentId;
+	private final String title;
+	private final Course course;
+	private final double pointsPossible;
+	
+	public int getAssignmentId() {
+		return assignmentId;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public Course getCourseId() {
+		return course;
+	}
+	public double getPointsPossible() {
+		return pointsPossible;
+	}
+	
+	public Assignment(int assignmentId, String title, Course course, double pointsPossible) {
 		super();
-		this.course = course;
+		this.assignmentId = assignmentId;
 		this.title = title;
-		this.assignDate = assignDate;
-		this.dueDate = dueDate;
+		this.course = course;
 		this.pointsPossible = pointsPossible;
-		this.assignmentType = AssignmentType.valueOf(assignmentType);
 	}
 }
