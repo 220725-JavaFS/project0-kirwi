@@ -25,14 +25,14 @@ public class AdminDAOImpl implements AdminDAO {
 			List<Course> courses = new LinkedList<>();
 			while (result.next()) {
 				User instructor = new User(
-								result.getInt("user_id"),
-								result.getString("first_name"),
-								result.getString("last_name"),
-								result.getString("user_role"));
+								result.getInt("u.user_id"),
+								result.getString("u.first_name"),
+								result.getString("u.last_name"),
+								result.getString("u.user_role"));
 				Course course = new Course(
-								result.getInt("course_id"),
-								result.getString("title"),
-								result.getString("decription"),
+								result.getInt("c.course_id"),
+								result.getString("c.title"),
+								result.getString("c.decription"),
 								instructor);
 				courses.add(course);
 			}
@@ -105,7 +105,7 @@ public class AdminDAOImpl implements AdminDAO {
 	@Override
 	public List<User> getInstructors() {
 		try (Connection conn = ConnectionUtil.getConnection()) {
-			String sql = "SELECT (user_id, first_name, last_name) FROM users WHERE user_role = 'INSTRUCTOR';";
+			String sql = "SELECT * FROM users WHERE user_role = 'INSTRUCTOR';";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
 			List<User> instructors = new LinkedList<>();
@@ -115,7 +115,7 @@ public class AdminDAOImpl implements AdminDAO {
 									result.getInt("user_id"),
 									result.getString("first_name"),
 									result.getString("last_name"),
-									"INSTRUCTOR"
+									result.getString("user_role")
 									);
 				instructors.add(instructor);
 			}

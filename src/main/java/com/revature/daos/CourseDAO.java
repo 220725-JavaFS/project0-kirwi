@@ -13,6 +13,8 @@ public interface CourseDAO {
 	
 	List<User> getStudentsInCourse(Course course);
 	
+	List<Course> getCoursesForStudent(User student);
+	
 	List<Assignment> getAssignmentsForCourse(Course course);
 	
 	Grade getGradeForStudent(Assignment assignment, User student);

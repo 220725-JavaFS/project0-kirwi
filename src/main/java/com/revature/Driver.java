@@ -5,11 +5,10 @@ import com.revature.layout.*;
 public class Driver {
 	
 	public static void main(String[] args) {
-		int[] data = new int[] {5, 2, 7, 1, 10, 8, 3, 4, 9, 6};		
-		Histogram hist = new Histogram(data);
-		System.out.println(hist.histogram());
-		
-		
+		String title = "PHY-201";
+		String[] content = new String[] {"1) poop", "2) caca shit", "3) big whoppin monster dump"};
+		Card card = new Card(title, content);
+		System.out.println(card.makeCard());
 	}
 
 }

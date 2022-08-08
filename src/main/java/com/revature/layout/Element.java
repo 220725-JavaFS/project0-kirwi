@@ -67,8 +67,13 @@ public class Element {
 	public Element(String[] contents) {
 		super();
 		this.contents = contents;
-		this.width = contents[0].length();
 		this.height = contents.length;
+		int width = 0;
+		for (int i=0; i<contents.length; i++) {
+			width = Math.max(contents[i].length(), width);
+		}
+		this.width = width;
+		
 	}
 	
 	public Element(String str) {

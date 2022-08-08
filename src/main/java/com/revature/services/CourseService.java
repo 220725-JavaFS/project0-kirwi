@@ -21,6 +21,10 @@ public class CourseService {
 		return courseDao.getStudentsInCourse(course);
 	}
 	
+	public List<Course> getCoursesForStudent(User student) {
+		return courseDao.getCoursesForStudent(student);
+	}
+	
 	public List<Assignment> getAssignmentsForCourse(Course course) {
 		return courseDao.getAssignmentsForCourse(course);
 	}

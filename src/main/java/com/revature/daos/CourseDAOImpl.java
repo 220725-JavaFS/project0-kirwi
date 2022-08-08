@@ -30,13 +30,13 @@ public class CourseDAOImpl implements CourseDAO {
 			if (result.next()) {
 				Course course = new Course(
 								courseId,
-								result.getString("title"),
-								result.getString("description"),
+								result.getString("c.title"),
+								result.getString("c.description"),
 								new User(
-										result.getInt("instructor_id"),
-										result.getString("first_name"),
-										result.getString("last_name"),
-										result.getString("role")
+										result.getInt("c.instructor_id"),
+										result.getString("u.first_name"),
+										result.getString("u.last_name"),
+										result.getString("u.role")
 										)
 								);
 				
@@ -62,15 +62,52 @@ public class CourseDAOImpl implements CourseDAO {
 			
 			while (result.next()) {
 				User student = new User(
-								result.getInt("user_id"),
-								result.getString("first_name"),
-								result.getString("last_name"),
-								result.getString("role")
+								result.getInt("u.user_id"),
+								result.getString("u.first_name"),
+								result.getString("u.last_name"),
+								result.getString("u.role")
 								);
 				students.add(student);
 			}
 			
 			return students;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public List<Course> getCoursesForStudent(User student) {
+		try (Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT (c.course_id, c.title, c.descripton, c.instructor_id, u.first_name, u.last_name, u.user_role)"
+						+"FROM courses c INNER JOIN student_schedule ss"
+						+"ON c.course_id = ss.course_id"
+						+"INNER JOIN users u"
+						+"ON ss.instructor_id = u.user_id"
+						+"WHERE ss.student_id = "+student.getUserId()+";";
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+			List<Course> courses = new LinkedList<>();
+			
+			while (result.next()) {
+				User instructor = new User(
+									result.getInt("c.instructor_id"),
+									result.getString("u.first_name"),
+									result.getString("u.last_name"),
+									result.getString("u.user_role")
+									);
+				Course course = new Course(
+								result.getInt("c.course_id"),
+								result.getString("c.title"),
+								result.getString("c.description"),
+								instructor
+								);
+				courses.add(course);
+			}
+			
+			return courses;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -120,7 +157,7 @@ public class CourseDAOImpl implements CourseDAO {
 			if (result.next()) {
 				Grade grade = new Grade(
 								assignment,
-								result.getDouble("points_earned"),
+								result.getDouble("a.points_earned"),
 								student);
 				
 				return grade;
