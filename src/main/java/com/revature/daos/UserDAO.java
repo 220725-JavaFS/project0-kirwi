@@ -6,5 +6,7 @@ public interface UserDAO {
 
 	User getUserById(int userId);
 	
-	void insertUser(User user);
+	User getUserWithPassword(int userId, String password);
+	
+	void insertUser(User user, String password);
 }

@@ -1,6 +1,7 @@
 package com.revature.services;
 
 import java.util.List;
+import java.util.Map;
 
 import com.revature.daos.CourseDAO;
 import com.revature.daos.CourseDAOImpl;
@@ -17,20 +18,24 @@ public class CourseService {
 		return courseDao.getCourseById(courseId);
 	}
 	
-	public List<User> getStudentsInCourse(Course course) {
+	public Map<Integer, User> getStudentsInCourse(Course course) {
 		return courseDao.getStudentsInCourse(course);
 	}
 	
-	public List<Course> getCoursesForStudent(User student) {
+	public Map<Integer, Course> getCoursesForStudent(User student) {
 		return courseDao.getCoursesForStudent(student);
 	}
 	
-	public List<Assignment> getAssignmentsForCourse(Course course) {
+	public Map<Integer, Assignment> getAssignmentsForCourse(Course course) {
 		return courseDao.getAssignmentsForCourse(course);
 	}
 	
-	public Grade getGradeForStudent(Assignment assignment, User student) {
-		return courseDao.getGradeForStudent(assignment, student);
+	public Grade getGradeForStudent(int assignmentId, Course course, User student) {
+		return courseDao.getGradeForStudent(assignmentId, course, student);
+	}
+	
+	public Map<Integer, Course> getCoursesForInstructor(User instructor) {
+		return courseDao.getCoursesForInstructor(instructor);
 	}
 	
 	public void addAssignmentToCourse(Assignment assignment, Course course) {
@@ -39,5 +44,9 @@ public class CourseService {
 	
 	public void deleteAssignment(Assignment assignment) {
 		courseDao.deleteAssignment(assignment);
+	}
+	
+	public List<Double> getGradesForAssignment(Assignment assignment)  {
+		return courseDao.getGradesForAssignment(assignment);
 	}
 }

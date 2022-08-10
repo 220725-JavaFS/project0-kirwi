@@ -5,8 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.revature.models.Course;
 import com.revature.models.User;
@@ -15,26 +15,28 @@ import com.revature.utils.ConnectionUtil;
 public class AdminDAOImpl implements AdminDAO {
 
 	@Override
-	public List<Course> getAllCourses() {
+	public Map<Integer, Course> getAllCourses() {
 		try (Connection conn = ConnectionUtil.getConnection()) {
-			String sql = "SELECT (c.course_id, c.title, c.description, u.user_id, u.first_name, u.last_name, u.user_role)"
-						+"FROM courses c INNER JOIN users u"
-						+"ON c.instructor_id = u.user_id";
+			String sql = "SELECT c.course_id as cid, c.title as t, "
+						+"c.description as d, u.user_id as uid, "
+						+"u.first_name as fn, u.last_name as ln, u.user_role as ur "
+						+"FROM courses c INNER JOIN users u "
+						+"ON c.instructor_id = u.user_id;";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
-			List<Course> courses = new LinkedList<>();
+			Map<Integer, Course> courses = new HashMap<>();
 			while (result.next()) {
 				User instructor = new User(
-								result.getInt("u.user_id"),
-								result.getString("u.first_name"),
-								result.getString("u.last_name"),
-								result.getString("u.user_role"));
+								result.getInt("uid"),
+								result.getString("fn"),
+								result.getString("ln"),
+								result.getString("ur"));
 				Course course = new Course(
-								result.getInt("c.course_id"),
-								result.getString("c.title"),
-								result.getString("c.decription"),
+								result.getInt("cid"),
+								result.getString("t"),
+								result.getString("d"),
 								instructor);
-				courses.add(course);
+				courses.put(result.getInt("uid"), course);
 			}
 			
 			return courses;
@@ -46,42 +48,7 @@ public class AdminDAOImpl implements AdminDAO {
 	}
 
 	@Override
-	public void enrollStudentInCourse(User student, Course course) {
-		try (Connection conn = ConnectionUtil.getConnection()) {
-			String sql = "BEGIN;"
-						+"INSERT INTO users (user_id, first_name, last_name, user_role)"
-						+"VALUES (?, ?, ?, ?)"
-						+"INSERT INTO courses (course_id, title, description, instructor_id)"
-						+"VALUES (?, ?, ?, ?)"
-						+"INSERT INTO student_schedule (sutdent_id, course_id)"
-						+"VALUES (?, ?)"
-						+"COMMIT;";
-			PreparedStatement statement = conn.prepareStatement(sql);
-			
-			int count = 0;
-			statement.setInt(++count, student.getUserId());
-			statement.setString(++count, student.getFirstName());
-			statement.setString(++count, student.getLastName());
-			statement.setString(++count, student.getRole().toString());
-			statement.setInt(++count, course.getCourseId());
-			statement.setString(++count, course.getTitle());
-			statement.setString(++count, course.getDescription());
-			statement.setInt(++count, course.getInstructor().getUserId());
-			statement.setInt(++count, student.getUserId());
-			statement.setInt(++count, course.getCourseId());
-			
-			if (statement.execute()) System.out.println("Student Enrolled");
-			else System.out.println("There was an error enrolling the student. Please try again.");
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-
-	}
-
-	@Override
-	public void addCourse(Course course) {
+	public void addCourse(Course course, int instructorId) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			String sql = "INSERT INTO courses (course_id, title, description, instructor_id)"
 						+"VALUES (?, ?, ?, ?);";
@@ -91,7 +58,7 @@ public class AdminDAOImpl implements AdminDAO {
 			statement.setInt(++count, course.getCourseId());
 			statement.setString(++count, course.getTitle());
 			statement.setString(++count, course.getDescription());
-			statement.setInt(++count, course.getInstructor().getUserId());
+			statement.setInt(++count, instructorId);
 			
 			if (statement.execute()) System.out.println("Course added!");
 			else System.out.println("There was an error adding the course. Please try again.");
@@ -103,12 +70,12 @@ public class AdminDAOImpl implements AdminDAO {
 	}
 
 	@Override
-	public List<User> getInstructors() {
+	public Map<Integer, User> getInstructors() {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			String sql = "SELECT * FROM users WHERE user_role = 'INSTRUCTOR';";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
-			List<User> instructors = new LinkedList<>();
+			Map<Integer, User> instructors = new HashMap<>();
 			
 			while (result.next()) {
 				User instructor = new User(
@@ -117,7 +84,7 @@ public class AdminDAOImpl implements AdminDAO {
 									result.getString("last_name"),
 									result.getString("user_role")
 									);
-				instructors.add(instructor);
+				instructors.put(result.getInt("user_id"), instructor);
 			}
 			
 			return instructors;
@@ -127,5 +94,33 @@ public class AdminDAOImpl implements AdminDAO {
 		}
 		return null;
 	}
+
+	@Override
+	public Map<Integer, User> getStudents() {
+		try (Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM users WHERE user_role = 'STUDENT';";
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+			Map<Integer, User> students = new HashMap<>();
+			
+			while (result.next()) {
+				User student = new User (
+								result.getInt("user_id"),
+								result.getString("first_name"),
+								result.getString("last_name"),
+								result.getString("user_role")
+								);
+				students.put(result.getInt("user_id"), student);
+			
+			}
+			return students;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 
 }

@@ -11,7 +11,11 @@ public class UserService {
 		return userDao.getUserById(userId);
 	}
 	
-	public void addUser(User user) {
-		userDao.insertUser(user);
+	public User getUserWithPassword(int userId, String password) {
+		return userDao.getUserWithPassword(userId, password);
+	}
+	
+	public void addUser(User user, String password) {
+		userDao.insertUser(user, password);
 	}
 }

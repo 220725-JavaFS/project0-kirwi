@@ -1,17 +1,17 @@
 package com.revature.daos;
 
-import java.util.List;
+import java.util.Map;
 
 import com.revature.models.Course;
 import com.revature.models.User;
 
 public interface AdminDAO {
 
-	List<Course> getAllCourses();
+	Map<Integer, Course> getAllCourses();
 	
-	void enrollStudentInCourse(User student, Course course);
+	void addCourse(Course course, int instructorId);
 	
-	void addCourse(Course course);
+	Map<Integer, User> getInstructors();
 	
-	List<User> getInstructors();
+	Map<Integer, User> getStudents();
 }

@@ -18,6 +18,14 @@ public class Grade {
 		return student;
 	}
 	
+	@Override
+	public String toString() {
+		String pointsPossible = "Points Possible: " + assignment.getPointsPossible();
+		String score = "Score: " + pointsEarned;
+		return pointsPossible + '\n' + score;
+		
+	}
+	
 	public Grade(Assignment assignment, double pointsEarned, User student) {
 		super();
 		this.assignment = assignment;

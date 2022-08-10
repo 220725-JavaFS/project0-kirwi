@@ -8,20 +8,21 @@ public class Histogram {
 	int[] data;
 	
 	private Element bar(char style, int width, int height) {
-		return new Element(Utils.arrFill(style, width, height));
+		if (height > 0) return new Element(Utils.arrFill(style, width, height));
+		else return space(3);
 	}
 	
 	private Element space(int n) {
 		return new Element(Utils.arrFill(' ', n, 1));
 	}
 	
-//	private Element xAxis(int[] xTicks, int width) {
-//		// TODO write implementation for x-axis
-//	}
-//	
-//	private Element yAxis(int[] yTicks, int height) {
-//		// TODO write implementation for y-axis
-//	}
+	public Element xAxis() {
+		return new Element(Utils.stringMult("-", 10*3 + 9)); 
+	}
+	
+	public Element xTicks() {
+		return new Element(" 10  20  30  40  50  60  70  80  90  100");
+	}
 	
 	public Element histogram() {
 		int i=1;
@@ -29,7 +30,7 @@ public class Histogram {
 		while (i<data.length) {
 			out = out.beside(space(1)).beside(bar((char) 0x2588, 3, data[i]));
 			i++;
-		}
+		} 
 		return new Element(Utils.reverse(out.contents));
 	}
 	

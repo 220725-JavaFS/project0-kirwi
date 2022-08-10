@@ -24,13 +24,9 @@ public class Utils {
 	
 	public static String[] arrConcat(String[] a, String[] b) {
 		String[] out = new String[a.length + b.length];
-		int i = 0;
-		while (i < (a.length + b.length)) {
-			if (i < a.length) {
-				out[i] = a[i];
-			} else {
-				out[i] = b[i-a.length-1];
-			}
+		for (int i=0; i<(a.length+b.length); i++) {
+			if (i < a.length) out[i] = a[i];
+			else out[i] = b[i-a.length];
 		}
 		return out;
 	}

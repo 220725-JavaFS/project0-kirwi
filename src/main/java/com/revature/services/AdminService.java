@@ -1,6 +1,6 @@
 package com.revature.services;
 
-import java.util.List;
+import java.util.Map;
 
 import com.revature.daos.AdminDAO;
 import com.revature.daos.AdminDAOImpl;
@@ -11,19 +11,15 @@ public class AdminService {
 	
 	private AdminDAO adminDao = new AdminDAOImpl();
 	
-	public List<Course> listAllCourses() {
+	public Map<Integer, Course> getAllCourses() {
 		return adminDao.getAllCourses();
 	}
 	
-	public void enrollStudentInCourse(User student, Course course) {
-		adminDao.enrollStudentInCourse(student, course);
+	public void addCourse(Course course, int instructorId) {
+		adminDao.addCourse(course, instructorId);
 	}
 	
-	public void addCourse(Course course) {
-		adminDao.addCourse(course);
-	}
-	
-	public List<User> getInstructors() {
+	public Map<Integer, User> getInstructors() {
 		return adminDao.getInstructors();
 	}
 	

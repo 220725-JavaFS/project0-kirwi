@@ -20,6 +20,14 @@ public class Course {
 		return instructor;
 	}
 	
+	@Override
+	public String toString() {
+		String id = "ID:\t" + courseId; 
+		String title = "Title:\t" + this.title +" | " + description;
+		String instructorName = "Prof:\t" + instructor.getLastName()+", " + instructor.getFirstName();
+		return id + '\n' + title + '\n' + instructorName;
+	}
+	
 	public Course(int courseId, String title, String description, User instructor) {
 		super();
 		this.courseId = courseId;

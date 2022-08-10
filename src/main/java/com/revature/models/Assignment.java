@@ -13,11 +13,19 @@ public class Assignment {
 	public String getTitle() {
 		return title;
 	}
-	public Course getCourseId() {
+	public Course getCourse() {
 		return course;
 	}
 	public double getPointsPossible() {
 		return pointsPossible;
+	}
+	
+	@Override
+	public String toString() {
+		String id = "ID:\t" + assignmentId;
+		String title = "Title:\t" + this.title;
+		String points = "Points:\t" + pointsPossible;
+		return id + '\n' + title + '\n' + points;
 	}
 	
 	public Assignment(int assignmentId, String title, Course course, double pointsPossible) {

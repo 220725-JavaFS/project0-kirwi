@@ -1,8 +1,9 @@
 package com.revature.daos;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Map;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,9 +21,9 @@ public class CourseDAOImpl implements CourseDAO {
 	@Override
 	public Course getCourseById(int courseId) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
-			String sql = "SELECT (c.title, c.descripton, c.instructor_id, u.first_name, u.last_name, u.role)"
-						+"FROM courses c INNER JOIN users u"
-						+"ON c.instructor_id = u.user_id"
+			String sql = "SELECT c.title as t, c.description as d, c.instructor_id as iid, u.first_name as fn, u.last_name as ln, u.user_role as ur "
+						+"FROM courses c INNER JOIN users u "
+						+"ON c.instructor_id = u.user_id "
 						+"WHERE course_id = "+courseId+";";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
@@ -30,13 +31,13 @@ public class CourseDAOImpl implements CourseDAO {
 			if (result.next()) {
 				Course course = new Course(
 								courseId,
-								result.getString("c.title"),
-								result.getString("c.description"),
+								result.getString("t"),
+								result.getString("d"),
 								new User(
-										result.getInt("c.instructor_id"),
-										result.getString("u.first_name"),
-										result.getString("u.last_name"),
-										result.getString("u.role")
+										result.getInt("iid"),
+										result.getString("fn"),
+										result.getString("ln"),
+										result.getString("ur")
 										)
 								);
 				
@@ -50,24 +51,24 @@ public class CourseDAOImpl implements CourseDAO {
 	}
 
 	@Override
-	public List<User> getStudentsInCourse(Course course) {
+	public Map<Integer, User> getStudentsInCourse(Course course) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
-			String sql = "SELECT (u.user_id, u.first_name, u.last_name, u.role)" 
-						+"FROM users u INNER JOIN student_schedule ss"
-						+"ON u.user_id = ss.student_id"
+			String sql = "SELECT u.user_id as uid, u.first_name as fn, u.last_name as ln, u.user_role as ur " 
+						+"FROM users u INNER JOIN student_schedule ss "
+						+"ON u.user_id = ss.student_id "
 						+"WHERE ss.course_id = "+course.getCourseId()+";";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
-			List<User> students = new LinkedList<>();
+			Map<Integer, User> students = new HashMap<>();
 			
 			while (result.next()) {
 				User student = new User(
-								result.getInt("u.user_id"),
-								result.getString("u.first_name"),
-								result.getString("u.last_name"),
-								result.getString("u.role")
+								result.getInt("uid"),
+								result.getString("fn"),
+								result.getString("ln"),
+								result.getString("ur")
 								);
-				students.add(student);
+				students.put(student.getUserId(), student);
 			}
 			
 			return students;
@@ -79,32 +80,32 @@ public class CourseDAOImpl implements CourseDAO {
 	}
 	
 	@Override
-	public List<Course> getCoursesForStudent(User student) {
+	public Map<Integer, Course> getCoursesForStudent(User student) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
-			String sql = "SELECT (c.course_id, c.title, c.descripton, c.instructor_id, u.first_name, u.last_name, u.user_role)"
-						+"FROM courses c INNER JOIN student_schedule ss"
-						+"ON c.course_id = ss.course_id"
-						+"INNER JOIN users u"
-						+"ON ss.instructor_id = u.user_id"
+			String sql = "SELECT c.course_id as cid, c.title as t, c.description as d, c.instructor_id as iid, u.first_name as fn, u.last_name as ln, u.user_role as ur "
+						+"FROM courses c INNER JOIN student_schedule ss "
+						+"ON c.course_id = ss.course_id "
+						+"INNER JOIN users u "
+						+"ON c.instructor_id = u.user_id "
 						+"WHERE ss.student_id = "+student.getUserId()+";";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
-			List<Course> courses = new LinkedList<>();
+			Map<Integer, Course> courses = new HashMap<>();
 			
 			while (result.next()) {
 				User instructor = new User(
-									result.getInt("c.instructor_id"),
-									result.getString("u.first_name"),
-									result.getString("u.last_name"),
-									result.getString("u.user_role")
+									result.getInt("iid"),
+									result.getString("fn"),
+									result.getString("ln"),
+									result.getString("ur")
 									);
 				Course course = new Course(
-								result.getInt("c.course_id"),
-								result.getString("c.title"),
-								result.getString("c.description"),
+								result.getInt("cid"),
+								result.getString("t"),
+								result.getString("d"),
 								instructor
 								);
-				courses.add(course);
+				courses.put(result.getInt("cid"), course);
 			}
 			
 			return courses;
@@ -114,14 +115,15 @@ public class CourseDAOImpl implements CourseDAO {
 		}
 		return null;
 	}
+	
 
 	@Override
-	public List<Assignment> getAssignmentsForCourse(Course course) {
+	public Map<Integer, Assignment> getAssignmentsForCourse(Course course) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			String sql = "SELECT * FROM assignments WHERE course_id = "+course.getCourseId()+";";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
-			List<Assignment> assignments = new LinkedList<>();
+			Map<Integer, Assignment> assignments = new HashMap<>();
 			
 			while (result.next()) {
 				Assignment assignment = new Assignment(
@@ -130,7 +132,7 @@ public class CourseDAOImpl implements CourseDAO {
 										course,
 										result.getDouble("points_possible")
 										);
-				assignments.add(assignment);
+				assignments.put(assignment.getAssignmentId(), assignment);
 			}
 			
 			return assignments;
@@ -142,27 +144,59 @@ public class CourseDAOImpl implements CourseDAO {
 	}
 
 	@Override
-	public Grade getGradeForStudent(Assignment assignment, User student) {
+	public Grade getGradeForStudent(int assignmentId, Course course, User student) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
 			
 		
-			String sql = "SELECT (a.points_earned)" 
-						+"FROM assignments a INNER JOIN grades g"
-						+"ON a.assignment_id = g.assignment_id"
-						+"WHERE a.assignment_id = "+assignment.getAssignmentId()
+			String sql = "SELECT a.title as t, a.points_possible as pp, g.points_earned as pe "
+						+"FROM assignments a INNER JOIN grades g "
+						+"ON a.assignment_id = g.assignment_id "
+						+"WHERE a.assignment_id = "+assignmentId
+						+"AND a.course_id = "+course.getCourseId()
 						+"AND g.student_id = "+student.getUserId()+";";
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery(sql);
 			
 			if (result.next()) {
+				Assignment assignment = new Assignment(
+										assignmentId,
+										result.getString("t"),
+										course,
+										result.getDouble("pp")
+										);
 				Grade grade = new Grade(
 								assignment,
-								result.getDouble("a.points_earned"),
-								student);
-				
+								result.getDouble("pe"),
+								student
+								);
 				return grade;
 				
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public Map<Integer, Course> getCoursesForInstructor(User instructor) {
+		try (Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM courses WHERE instructor_id = "+instructor.getUserId()+";";
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+			Map<Integer, Course> courses = new HashMap<>();
+			
+			while (result.next()) {
+				Course course = new Course(
+								result.getInt("course_id"),
+								result.getString("title"),
+								result.getString("description"),
+								instructor
+								);
+				courses.put(course.getCourseId(), course);
+			}	
+			return courses;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -204,7 +238,25 @@ public class CourseDAOImpl implements CourseDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+	}
+	
+	@Override
+	public List<Double> getGradesForAssignment(Assignment assignment) {
+		try (Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT points_earned FROM grades WHERE assignment_id = "+assignment.getAssignmentId();
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+			List<Double> grades = new LinkedList<>();
+			
+			while (result.next()) {
+				Double grade = result.getDouble("points_earned");
+				grades.add(grade);
+			}
+			return grades;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

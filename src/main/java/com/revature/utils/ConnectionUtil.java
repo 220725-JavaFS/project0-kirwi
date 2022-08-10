@@ -8,7 +8,7 @@ public class ConnectionUtil {
 
 	private static Connection connection;
 	public static Connection getConnection() throws SQLException {
-		if (connection != null) return connection;
+		if (connection != null && !connection.isClosed()) return connection;
 		else {
 			try {
 				Class.forName("org.postgresql.Driver");
