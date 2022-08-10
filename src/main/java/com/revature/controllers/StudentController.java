@@ -13,13 +13,14 @@ import com.revature.layout.utils.Utils;
 public class StudentController {
 
 	private final User student;
-	private final Map<Integer, Course> courses;
 	
 	private Scanner scan = new Scanner(System.in);
 	private CourseService cs = new CourseService();
 	private String border = Utils.stringMult("-", 50);
 	
 	public void home() {
+		
+		Map<Integer, Course> courses = cs.getCoursesForStudent(student);
 	
 		String welcomeString = "Welcome "+student.getFirstName()+" "+student.getLastName();
 		
@@ -116,6 +117,5 @@ public class StudentController {
 	public StudentController(User student) {
 		super();
 		this.student = student;
-		this.courses = cs.getCoursesForStudent(student);
 	}
 }

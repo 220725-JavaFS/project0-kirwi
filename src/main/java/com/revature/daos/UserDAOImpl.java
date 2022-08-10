@@ -24,7 +24,32 @@ public class UserDAOImpl implements UserDAO {
 						result.getInt("user_id"),
 						result.getString("first_name"),
 						result.getString("last_name"),
-						result.getString("role")
+						result.getString("user_role")
+						);
+				
+				return user;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public User getInstructorById(int userId) {
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM users WHERE user_id = "+userId+" "
+						+"AND user_role = 'INSTRUCTOR';";
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery(sql);
+			
+			if (result.next()) {
+				User user = new User(
+						result.getInt("user_id"),
+						result.getString("first_name"),
+						result.getString("last_name"),
+						result.getString("user_role")
 						);
 				
 				return user;

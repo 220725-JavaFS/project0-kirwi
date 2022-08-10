@@ -9,7 +9,7 @@ public interface AdminDAO {
 
 	Map<Integer, Course> getAllCourses();
 	
-	void addCourse(Course course, int instructorId);
+	void addCourse(String title, String description, int instructorId);
 	
 	Map<Integer, User> getInstructors();
 	

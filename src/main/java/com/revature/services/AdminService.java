@@ -15,14 +15,12 @@ public class AdminService {
 		return adminDao.getAllCourses();
 	}
 	
-	public void addCourse(Course course, int instructorId) {
-		adminDao.addCourse(course, instructorId);
+	public void addCourse(String title, String description, int instructorId) {
+		adminDao.addCourse(title, description, instructorId);
 	}
 	
 	public Map<Integer, User> getInstructors() {
 		return adminDao.getInstructors();
 	}
-	
-	
 
 }

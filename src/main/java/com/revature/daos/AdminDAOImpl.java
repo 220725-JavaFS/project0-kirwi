@@ -36,7 +36,7 @@ public class AdminDAOImpl implements AdminDAO {
 								result.getString("t"),
 								result.getString("d"),
 								instructor);
-				courses.put(result.getInt("uid"), course);
+				courses.put(result.getInt("cid"), course);
 			}
 			
 			return courses;
@@ -48,20 +48,19 @@ public class AdminDAOImpl implements AdminDAO {
 	}
 
 	@Override
-	public void addCourse(Course course, int instructorId) {
+	public void addCourse(String title, String description, int instructorId) {
 		try (Connection conn = ConnectionUtil.getConnection()) {
-			String sql = "INSERT INTO courses (course_id, title, description, instructor_id)"
-						+"VALUES (?, ?, ?, ?);";
+			String sql = "INSERT INTO courses (title, description, instructor_id) "
+						+"VALUES (?, ?, ?);";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			
 			int count = 0;
-			statement.setInt(++count, course.getCourseId());
-			statement.setString(++count, course.getTitle());
-			statement.setString(++count, course.getDescription());
+			statement.setString(++count, title);
+			statement.setString(++count, description);
 			statement.setInt(++count, instructorId);
+			statement.execute();
+			System.out.println("Course added!");
 			
-			if (statement.execute()) System.out.println("Course added!");
-			else System.out.println("There was an error adding the course. Please try again.");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

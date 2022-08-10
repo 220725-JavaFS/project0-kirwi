@@ -9,4 +9,6 @@ public interface UserDAO {
 	User getUserWithPassword(int userId, String password);
 	
 	void insertUser(User user, String password);
+	
+	User getInstructorById(int userId);
 }

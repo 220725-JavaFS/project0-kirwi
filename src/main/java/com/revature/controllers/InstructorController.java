@@ -14,7 +14,7 @@ import com.revature.services.CourseService;
 public class InstructorController {
 	
 	private final User instructor;
-	private final Map<Integer, Course> courses;
+	
 	
 	private Scanner scan = new Scanner(System.in);
 	private CourseService cs = new CourseService();
@@ -22,6 +22,8 @@ public class InstructorController {
 	private String border = Utils.stringMult("-", 50);
 	
 	public void home() {
+		Map<Integer, Course> courses = cs.getCoursesForInstructor(instructor);
+		
 		String welcomeString = "Welcome, professor "+instructor.getFirstName()+" "+instructor.getLastName()+".";
 		
 		System.out.println();
@@ -127,7 +129,6 @@ public class InstructorController {
 	public InstructorController(User instructor) {
 		super();
 		this.instructor = instructor;
-		this.courses = cs.getCoursesForInstructor(instructor);
 	}
 
 }

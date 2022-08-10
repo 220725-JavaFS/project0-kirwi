@@ -11,6 +11,10 @@ public class UserService {
 		return userDao.getUserById(userId);
 	}
 	
+	public User getInstructorById(int userId) {
+		return userDao.getInstructorById(userId);
+	}
+	
 	public User getUserWithPassword(int userId, String password) {
 		return userDao.getUserWithPassword(userId, password);
 	}
